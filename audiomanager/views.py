@@ -20,7 +20,7 @@ from pydub import AudioSegment
 
 
 class AudioSegmentView(View):
-    def get(self, song_id, duration):
+    def get(self, request, song_id, duration, *args, **kwargs):
         audio_file = AudioFile.objects.get(pk=song_id)
         audio_path = audio_file.url.path
 
@@ -39,19 +39,12 @@ class AudioSegmentView(View):
 class AudioAPIView(APIView):
     def get(self, request):
         queryset = AudioFile.objects.all()
-        paginator = Paginator(queryset, 20)
-        page_number = request.GET.get('page')
-        page_obj = paginator.get_page(page_number)
-
-        if page_number and int(page_number) > paginator.num_pages:
-            return Response([])
-
-        serializer = AudioUploadSerializer(page_obj, many=True, context={'request': request})
+        serializer = AudioUploadSerializer(queryset, many=True, context={'request': request})
 
         return Response(serializer.data)
 
 class AudioAPITest(APIView):
-    def get(self, song_id):
+    def get(self, request, song_id):
 
         song = AudioFile.objects.get(id=song_id)
         song_data = song.url.path
