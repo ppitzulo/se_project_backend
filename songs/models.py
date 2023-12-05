@@ -9,7 +9,6 @@ import os
 class Song(models.Model):
     url = models.FileField(upload_to='audio/')
     title = models.CharField(max_length=255, default="Untitled")
-    thumbnail = models.ImageField(upload_to="thumbnails/", blank=True, null=True)
     runtime = models.CharField(max_length=10, default="0:00")
     artist = models.CharField(max_length=255, default="Unknown")
     uploaded_at = models.DateTimeField(auto_now_add=True)
@@ -33,8 +32,6 @@ class Song(models.Model):
             if audio.tag.artist is not None:
                 self.artist = audio.tag.artist
 
-            self.thumbnail = extract_thumbnail(file_path)
-            print(self.thumbnail)
 
             super().save(*args, **kwargs)
             for playlist in self.playlists.all():
@@ -51,26 +48,6 @@ class Song(models.Model):
             return f'{hours}:{str(minutes).zfill(2)}:{str(seconds).zfill(2)}'
         else:
             return f'{minutes}:{str(seconds).zfill(2)}'
-
-def extract_thumbnail(audio_file_path):
-    print("DEBUGFUNCTION: " + audio_file_path)
-    audio = eyed3.load(audio_file_path)
-    # Convert the filename extension to .jpg
-    thumbnail_filename = os.path.basename(audio_file_path).split('.')[0] + '.jpg'
-    thumbnail_url = "thumbnails/" + thumbnail_filename  # Update the URL here
-    thumbnail_path = os.path.join(settings.MEDIA_ROOT, "thumbnails/" + thumbnail_filename)
-    print("DEBUG: " + thumbnail_path)
-
-    if audio.tag and audio.tag.images:
-        print("DEBUG: found audio tags")
-        for image in audio.tag.images:
-            image_data = image.image_data
-            with open(thumbnail_path, "wb") as f:
-                f.write(image_data)
-
-            # Exit the loop after finding the first thumbnail
-            print("DEBUG PATH: " + thumbnail_path)
-            return thumbnail_url
 
 class PlayList(models.Model):
     name = models.CharField(max_length=255)

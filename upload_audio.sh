@@ -13,4 +13,4 @@ curl -X POST \
   -F "files=@${audio_file_path}" \
   --cookie "csrftoken=${csrftoken}" \
   -H "X-CSRFToken: ${csrftoken}" \
-  localhost:8000/songs/api/upload/
+  localhost:8000/songs/upload/
