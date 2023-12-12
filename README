@@ -1,0 +1,4 @@
+To run the Harmonify backend please create a new Python venv with the command `python -m venv .env`
+Then `source .env/bin/activate` for Linux and for Windows `source .env\Scripts\activate`
+Now pull in the dependencies with pip install -r requirements.txt
+Finally run with python manage.py runserver
